@@ -56,7 +56,7 @@ func (m *MemoryLifecycleManager) CleanupHook() lifecycle.CleanupHook {
 			// Ignore errors during cleanup as per Terminator contract
 			_ = m.consolidator.Consolidate(ctx, agentID, sessionID)
 		}
-		
+
 		// Clear short-term memory for the session
 		_ = m.shortTerm.Clear(ctx, agentID, sessionID)
 

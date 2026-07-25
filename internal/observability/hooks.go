@@ -73,7 +73,7 @@ func (h *EngineHooks) OnReasoningStep(agentID string, iteration int, output exec
 	if h.tracer != nil {
 		h.mu.Lock()
 		defer h.mu.Unlock()
-		
+
 		if span, ok := h.activeSpans[agentID]; ok {
 			actionType := "tools"
 			if output.FinalAnswer != "" {
@@ -104,16 +104,16 @@ func (h *EngineHooks) OnToolCall(agentID string, call execinterfaces.ToolCall, r
 	if h.tracer != nil {
 		h.mu.Lock()
 		defer h.mu.Unlock()
-		
+
 		if parentSpan, ok := h.activeSpans[agentID]; ok {
 			ctx := tracing.ContextWithSpan(context.Background(), parentSpan)
 			_, span := h.tracer.Start(ctx, "tool.call")
 			span.SetAttribute("tool_name", call.ToolName)
-			
+
 			if result.Err != nil {
 				span.SetAttribute("error", result.Err.Error())
 			} else {
-				// Record duration if we had it, but for v0.8 we just mark end immediately as this 
+				// Record duration if we had it, but for v0.8 we just mark end immediately as this
 				// hook fires *after* the tool call completes. Realistically, we'd wrap the call.
 				span.SetAttribute("success", "true")
 			}
@@ -138,12 +138,12 @@ func (h *EngineHooks) OnTurnEnd(agentID string, result execinterfaces.ExecutionR
 	if h.tracer != nil {
 		h.mu.Lock()
 		defer h.mu.Unlock()
-		
+
 		if span, ok := h.activeSpans[agentID]; ok {
 			if err != nil {
 				span.SetAttribute("error", err.Error())
 			}
-			
+
 			// We can record token usage on turn end if it's available in result or context
 			// For v0.8 just note the end.
 			span.AddEvent("turn_end", map[string]string{
